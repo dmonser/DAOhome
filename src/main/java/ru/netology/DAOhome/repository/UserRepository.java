@@ -1,8 +1,7 @@
 package ru.netology.DAOhome.repository;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -12,13 +11,17 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.sql.ResultSet;
 import java.util.HashMap;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Repository
 public class UserRepository {
 
-    @Autowired
-    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+    public UserRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+        this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
+    }
 
     private final String scriptFileName = "search_prod_by_name.sql";
     private final String sql = read(scriptFileName);
@@ -32,13 +35,11 @@ public class UserRepository {
         }
     }
 
-    public String getProductName(String name) {
+    public List<String> getProductName(String name) throws DataAccessException {
         var parameters = new HashMap<String, Object>();
         parameters.put("name", name);
 
-        return namedParameterJdbcTemplate.queryForObject(sql, parameters, (ResultSet rs, int rowNum) -> {
-            return rs.getString("product_name");
-        });
+        return namedParameterJdbcTemplate.queryForList(sql, parameters, String.class);
     }
 
 }

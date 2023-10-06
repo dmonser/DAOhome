@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.netology.DAOhome.repository.UserRepository;
 
+import java.util.List;
+
 @RestController
 public class Controller {
     final UserRepository userRepository;
@@ -14,7 +16,7 @@ public class Controller {
     }
 
     @GetMapping("/products/fetch-product")
-    public String getProductName(@RequestParam("name") String name) {
+    public List<String> getProductName(@RequestParam("name") String name) {
         return userRepository.getProductName(name);
     }
 }
